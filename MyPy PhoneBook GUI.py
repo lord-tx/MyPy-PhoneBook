@@ -115,6 +115,7 @@ class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.title("MYPY Phone Book")
+        self.resizable(0, 0)
 
         # self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
 
@@ -127,7 +128,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (MenuPage, GUILookUp, GUIAddEntry, GUIDeleteEntry):
+        for F in (MenuPage, GUILookUp, GUIAddEntry, GUIDeleteEntry, GUIUpdateEntry):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -154,24 +155,29 @@ class MenuPage(tk.Frame):
 
         # These parts are kinda explanatory - We just create a bunch of labels
         # and buttons
+        i = 0
+        while i < 5:
+            label = tk.Label(self, text="         ")
+            label.grid(column=0, row = i)
+            i += 1
 
         self.Welcome_Label = tk.Label(self, text=welcome)
-        self.Welcome_Label.grid(column=2, columnspan=3, padx=10, pady=10)
+        self.Welcome_Label.grid(column=2, row=0, columnspan=3, padx=10, pady=10)
 
         self.Add_Button = tk.Button(self, text="Add New Entry", command=lambda: controller.show_frame("GUIAddEntry"))
-        self.Add_Button.grid(column=2, columnspan=3, padx=10, pady=10)
+        self.Add_Button.grid(column=2, row=1, columnspan=3, padx=10, pady=10)
 
         self.Delete_Button = tk.Button(self, text="Delete Entry", command=lambda: controller.show_frame("GUIDeleteEntry"))
-        self.Delete_Button.grid(column=2, columnspan=3, padx=10, pady=10)
+        self.Delete_Button.grid(column=2, row=2, columnspan=3, padx=10, pady=10)
 
-        self.Update_Button = tk.Button(self, text="Update Entry")
-        self.Update_Button.grid(column=2, columnspan=3, padx=10, pady=10)
+        self.Update_Button = tk.Button(self, text="Update Entry", command=lambda: controller.show_frame("GUIUpdateEntry"))
+        self.Update_Button.grid(column=2, row=3, columnspan=3, padx=10, pady=10)
 
         self.Lookup_Button = tk.Button(self, text="Lookup Number", command=lambda: controller.show_frame("GUILookUp"))
-        self.Lookup_Button.grid(column=2, columnspan=3, padx=10, pady=10)
+        self.Lookup_Button.grid(column=2, row=4, columnspan=3, padx=10, pady=10)
 
         self.Exit_Button = tk.Button(self, text="Exit", command=quit)
-        self.Exit_Button.grid(column=2, columnspan=3, padx=10, pady=10)
+        self.Exit_Button.grid(column=2, row=5, columnspan=3, padx=10, pady=10)
 
     
     def Back(self):
@@ -275,7 +281,7 @@ class GUIDeleteEntry(tk.Frame):
             name = self.search_entry_name.get()
             phone_number = self.search_entry_number.get()
         except (_tkinter.TclError):
-            
+            print("Wrong Inputs")
         # Create an instance (object) of the phonebook class
         phonebook = PhoneBook.PhoneBook()
         # Start the JSON link as usual
@@ -283,17 +289,14 @@ class GUIDeleteEntry(tk.Frame):
         answer = self.Confirm_Change()
         self.result_sheet.grid()
         # Get a result from the Delete_Entry Function
-        result = phonebook.Delete_Entry(name, phone_number)
 
         if (answer == True):
+            result = phonebook.Delete_Entry(name, phone_number)
             self.text.set(result)
             self.search_entry_name.set("")
             self.search_entry_number.set("")
         else:
-            
-            self.text.set(total_result)
-            self.search_entry_name.set("")
-            self.search_entry_number.set("")
+            pass
 
     def Confirm_Change(self):
         message_box = messagebox.askquestion("Proceed", "Do you really want to delete this contact?")
@@ -342,17 +345,94 @@ class GUILookUp(tk.Frame):
         self.controller.show_frame("MenuPage")
 
 
-class PageTwo(tk.Frame):
+class GUIUpdateEntry(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="This is page 2") #, font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Go to the start page",
-                           command=lambda: controller.show_frame("StartPage"))
-        button.pack()
+        button = tk.Button(self, text="Back", command=self.Back)
+        button.grid(column=0, row=0, padx=10, pady=10)
 
+        name_label = tk.Label(self, text="Name: ")
+        name_label.grid(column=0, row=1, padx=10, pady=10)
+        number_label = tk.Label(self, text="Number: ")
+        number_label.grid(column=0, row=2, padx=10, pady=10)
+
+        self.search_entry_name = tk.StringVar()
+        self.search_entry_na = tk.Entry(self, width=20, textvariable=self.search_entry_name)
+        self.search_entry_na.grid(column=1, row=1, padx=10, pady=10)
+        self.search_entry_na.focus()
+
+        self.search_entry_number = tk.IntVar()
+        self.search_entry_no = tk.Entry(self, width=20, textvariable=self.search_entry_number)
+        self.search_entry_no.grid(column=1, row=2, padx=10, pady=10)
+
+        demacation_line = tk.Label(self, text="______________________________\n______________________________")
+        demacation_line.grid(column=0, row=3, padx=10, pady=10, columnspan=3)
+
+        new_name_label = tk.Label(self, text="New Name: ")
+        new_name_label.grid(column=0, row=4, padx=10, pady=10)
+        new_number_label = tk.Label(self, text="New Number: ")
+        new_number_label.grid(column=0, row=5, padx=10, pady=10)
+
+        self.search_entry_new_name = tk.StringVar()
+        self.search_entry_new_na = tk.Entry(self, width=20, textvariable=self.search_entry_new_name)
+        self.search_entry_new_na.grid(column=1, row=4, padx=10, pady=10)
+        self.search_entry_new_na.focus()
+
+        self.search_entry_new_number = tk.IntVar()
+        self.search_entry_new_no = tk.Entry(self, width=20, textvariable=self.search_entry_new_number)
+        self.search_entry_new_no.grid(column=1, row=5, padx=10, pady=10)
+
+        self.update_button = tk.Button(self, text="Update Contact", command=self.Update_Contact)
+        self.update_button.grid(column=0, row=6, padx=10, pady=10, columnspan=2)
+
+        self.text = tk.StringVar()
+        self.result_sheet = tk.Label(self, textvariable=self.text)
+        self.result_sheet.grid(column=0, row=7, padx=10, pady=10, columnspan=3)
+        self.result_sheet.grid_remove()
+    
+
+    def Update_Contact(self):
+        try:
+            name = self.search_entry_name.get()
+            phone_number = self.search_entry_number.get()
+            new_name = self.search_entry_new_name.get()
+            new_number = self.search_entry_new_number.get()
+
+            # Create an instance (object) of the phonebook class
+            phonebook = PhoneBook.PhoneBook()
+            # Start the JSON link as usual
+            phonebook.startJSON_link()
+            answer = self.Confirm_Change()
+            self.result_sheet.grid()
+            # Get a result from the Delete_Entry Function
+
+            if (answer == True):
+                result = phonebook.Update_Entry(name, phone_number, new_name, new_number)
+                self.text.set(result)
+                self.search_entry_name.set("")
+                self.search_entry_number.set("")
+            else:
+                pass
+
+        except tk.TclError:
+            error_msg = messagebox.showerror("Wrong Input!", "Please enter only valid characters or numbers!")
+            self.search_entry_number.set("")
+            self.search_entry_new_number.set("")
+            # print("Please Enter Only Valid Numbers") - Debugging purposes only
+
+
+    def Confirm_Change(self):
+        message_box = messagebox.askquestion("Proceed", "Do you really want to alter this contact?")
+        if message_box == 'yes':
+            return True
+        else:
+            return False
+
+    def Back(self):
+        self.result_sheet.grid_remove()
+        self.controller.show_frame("MenuPage")
 
 if __name__ == "__main__":
     app = SampleApp()

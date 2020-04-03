@@ -194,13 +194,25 @@ class PhoneBook(object):
         # Call the JSON file here and pop
         # details out of it
 
-    def Update_Entry(self, name, number):
+    def Update_Entry(self, name, number, new_name = "", new_number=0):
         # print (self.TotalArray) -- Debugging purposes only
         # Boolean to indicate if a value is found in the list or not
         available = False
         for record in self.TotalArray:
             # Traverse the array linearly (This should be binary in future)
             if ((record["name"] == name) & (record["number"] == number)):
+                # Check if the new_number already exists in there
+                if new_number in ([sub["number"] for sub in self.TotalArray]):
+                    return "Duplicate Details Exist! - Number already exists!"
+                else:
+                    # Save the updated list back to the JSON
+                    record["name"] = new_name
+                    record["number"] = new_number
+                    with open('phonebook.json', 'w') as phonebook:
+                        json.dump(self.TotalArray, phonebook, indent=4)
+                    # Set boolean to True to enable other manipulation
+                    available = True
+                """    
                 # Call the confirm_change function incase of any last 
                 # minute change of heart
                 if (self.confirm_change("alter") == True):
@@ -216,13 +228,16 @@ class PhoneBook(object):
                 else:
                     pass
                     # Adding anything here ruins this code
+                """
                 break
                     # This stops the app from doing any more iterations
 
         if available == True:
-            print ("Successful!")
+            # print ("Successful!") -- Non-API, CLI and Debugging purposes
+            return "Successful!"
         else:
-            print("\nNumber or name not found!\n")
+            # print("\nNumber or name not found!\n") -- Non-API, CLI and Debugging purposes
+            return "\nNumber or name not found!"
 
 
     def Lookup_Number(self, number):
