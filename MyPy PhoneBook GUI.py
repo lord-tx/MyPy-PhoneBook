@@ -2,109 +2,7 @@ import tkinter as tk
 import MYPYPhoneBook as PhoneBook
 from tkinter import messagebox
 
-# This first set of commented-out code is a simplistic GUI 
-# It just implements the LookUp function in a minimalistic
-# manner
-
-"""
-win = tk.Tk()
-win.title("Lookup Number")
-
-search_entry_number = tk.IntVar()
-search_entry = tk.Entry(win, width=20, textvariable=search_entry_number)
-search_entry.grid(column=0, row=0, padx=10, pady=10)
-
-def LookupContact(phone_number):
-    print(phone_number)
-    phonebook = PhoneBook.PhoneBook()
-    details = phonebook.Lookup_Number(phone_number)
-    name = details["name"]
-    print (name)
-
-search_button = tk.Button(win, text="Search", command=lambda: LookupContact(search_entry_number.get()))
-search_button.grid(column=0, row=1, padx=10, pady=10)
-
-result_sheet = tk.Label(win, width=10, height=5)
-result_sheet.grid(column=0, row=3, padx=10, pady=10)
-result_sheet.grid_forget()
-
-win.mainloop()
-"""
-
-# This second set of commented out code is a BUILD-DESTROY kind
-# of GUI where one window calls out another window but it becomes
-# cluttered quickly
-
-# It also fails to implement the LookUp function (I'm still trying
-# to figure out why?)
-"""
-class GUILookUp(object):
-    def __init__(self):
-        self.win = tk.Tk()
-        self.win.title("LookUp Number")
-        self.text = tk.StringVar()
-
-        self.Look_up_frame = tk.Frame(self.win)
-        self.Look_up_frame.grid()
-
-        self.search_entry_number = tk.IntVar()
-        self.search_entry = tk.Entry(self.Look_up_frame, width=20, textvariable=self.search_entry_number)
-        self.search_entry.grid(column=0, row=0, padx=10, pady=10)
-        self.search_entry.focus()
-
-        self.search_button = tk.Button(self.Look_up_frame, text="Search", command= self.LookupContact)
-        self.search_button.grid(column=0, row=1, padx=10, pady=10)
-
-        self.result_sheet = tk.Label(self.Look_up_frame, textvariable=self.text)
-        self.result_sheet.grid(column=0, row=3, padx=10, pady=10)
-        self.result_sheet.grid_remove()
-
-    def LookupContact(self):
-        phone_number = self.search_entry_number.get()
-        print(phone_number)
-        phonebook = PhoneBook.PhoneBook()
-        details = phonebook.Lookup_Number(phone_number)
-        name = str(details["name"])
-        # self.result_sheet.grid()
-        # self.text.set("Name: " + name + "\n Phone Number: " + (str(details["number"])))
-
-# lookup = GUILookUp()
-# lookup.win.mainloop()
-
-class GUIMENU(object):
-    def __init__(self):
-        self.gui_win = tk.Tk()
-        self.gui_win.title("GUI MyPy PhoneBook")
-
-        welcome = "\n\n--   MYPY PHONE BOOK   --\n\n"
-
-        self.Welcome_Label = tk.Label(self.gui_win, text=welcome)
-        self.Welcome_Label.grid()
-
-        self.Add_Button = tk.Button(self.gui_win, text="Add New Entry")
-        self.Add_Button.grid()
-
-        self.Delete_Button = tk.Button(self.gui_win, text="Delete Entry")
-        self.Delete_Button.grid()
-
-        self.Update_Button = tk.Button(self.gui_win, text="Update Entry")
-        self.Update_Button.grid()
-
-        self.Lookup_Button = tk.Button(self.gui_win, text="Lookup Number", command=self.Lookup_Button)
-        self.Lookup_Button.grid()
-
-        self.Exit_Button = tk.Button(self.gui_win, text="Exit", command=quit)
-        self.Exit_Button.grid()
-
-    def Lookup_Button(self):
-        lookup = GUILookUp()
-        lookup.win.mainloop()
-
-guimenu = GUIMENU()
-guimenu.gui_win.mainloop()
-
-"""
-
+# Changelog: Deleted Commented out code
 # This third implementation directly accesses the Tkinter class by inheriting
 # directly from it and implementing other classes as frames
 
@@ -178,11 +76,6 @@ class MenuPage(tk.Frame):
 
         self.Exit_Button = tk.Button(self, text="Exit", command=quit)
         self.Exit_Button.grid(column=2, row=5, columnspan=3, padx=10, pady=10)
-
-    
-    def Back(self):
-        self.result_sheet.grid_remove()
-        self.controller.show_frame("MenuPage")
 
 
 class GUIAddEntry(tk.Frame):
@@ -280,7 +173,7 @@ class GUIDeleteEntry(tk.Frame):
         try:
             name = self.search_entry_name.get()
             phone_number = self.search_entry_number.get()
-        except (_tkinter.TclError):
+        except (tk.TclError):
             print("Wrong Inputs")
         # Create an instance (object) of the phonebook class
         phonebook = PhoneBook.PhoneBook()
@@ -300,10 +193,7 @@ class GUIDeleteEntry(tk.Frame):
 
     def Confirm_Change(self):
         message_box = messagebox.askquestion("Proceed", "Do you really want to delete this contact?")
-        if message_box == 'yes':
-            return True
-        else:
-            return False
+        return (message_box == 'yes')
 
     def Back(self):
         self.result_sheet.grid_remove()
@@ -417,7 +307,7 @@ class GUIUpdateEntry(tk.Frame):
                 pass
 
         except tk.TclError:
-            error_msg = messagebox.showerror("Wrong Input!", "Please enter only valid characters or numbers!")
+            messagebox.showerror("Wrong Input!", "Please enter only valid characters or numbers!")
             self.search_entry_number.set("")
             self.search_entry_new_number.set("")
             # print("Please Enter Only Valid Numbers") - Debugging purposes only
@@ -425,10 +315,7 @@ class GUIUpdateEntry(tk.Frame):
 
     def Confirm_Change(self):
         message_box = messagebox.askquestion("Proceed", "Do you really want to alter this contact?")
-        if message_box == 'yes':
-            return True
-        else:
-            return False
+        return (message_box == 'yes')
 
     def Back(self):
         self.result_sheet.grid_remove()
