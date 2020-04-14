@@ -202,6 +202,7 @@ class PhoneBook(object):
             # Traverse the array linearly (This should be binary in future)
             if ((record["name"] == name) & (record["number"] == number)):
                 # Check if the new_number already exists in there
+                # For the API functionality
                 if new_number in ([sub["number"] for sub in self.TotalArray]):
                     return "Duplicate Details Exist! - Number already exists!"
                 else:
